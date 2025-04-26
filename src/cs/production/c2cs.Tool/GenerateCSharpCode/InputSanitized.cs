@@ -20,6 +20,8 @@ public class InputSanitized
 
     public string NamespaceName { get; init; } = string.Empty;
 
+    public bool IsEnabledAccessModifierInternal { get; init; } = true;
+
     public string CodeRegionHeader { get; init; } = string.Empty;
 
     public string CodeRegionFooter { get; init; } = string.Empty;
@@ -37,4 +39,6 @@ public class InputSanitized
     public bool IsEnabledFileScopedNamespace { get; init; }
 
     public bool IsEnabledSpans { get; init; }
+
+    public bool IsEnabledDryRun { get; init; }
 }
