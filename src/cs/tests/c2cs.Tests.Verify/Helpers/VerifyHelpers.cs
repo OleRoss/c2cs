@@ -7,16 +7,18 @@ using C2CS.GenerateCSharpCode;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.Extensions.Logging;
 
 namespace C2CS.Tests.Verify.Helpers;
 
-public abstract class VerifyHelpers(FileSystemHelper fileSystemHelper, Tool tool)
+public abstract class VerifyHelpers(FileSystemHelper fileSystemHelper, Tool tool, ILogger<VerifyHelpers>? logger = null)
 {
     private const string C2CsVersionScrubberStart = "//      https://github.com/bottlenoselabs/c2cs (";
     private const string C2CsVersionScrubberReplace = "//      https://github.com/bottlenoselabs/c2cs (Version)";
 
     private readonly FileSystemHelper _fileSystemHelper = fileSystemHelper;
     private readonly Tool _tool = tool;
+    private readonly ILogger<VerifyHelpers>? _logger = logger;
 
     protected async Task VerifyOutput(
         Output output,
@@ -84,12 +86,17 @@ public abstract class VerifyHelpers(FileSystemHelper fileSystemHelper, Tool tool
         var fileSystem = _fileSystemHelper.FileSystem;
         var extractConfigFilePath = fileSystem.Path.Combine(fullDirectoryPath, "config-extract.json");
         var extractShellOutput = $"c2ffi extract --config {extractConfigFilePath}".ExecuteShellCommand();
+#pragma warning disable CA1848
+        _logger?.LogInformation("{Output}", extractShellOutput.Output);
         Assert.True(extractShellOutput.ExitCode == 0, $"error extracting platform FFIs: \n{extractShellOutput.Output}");
+
         var ffiDirectoryPath = fileSystem.Path.Combine(fullDirectoryPath, "ffi");
         var crossFfiFilePath = fileSystem.Path.Combine(fullDirectoryPath, "ffi-x", "cross-platform.json");
         var ffiShellOutput =
             $"c2ffi merge --inputDirectoryPath {ffiDirectoryPath} --outputFilePath {crossFfiFilePath}"
                 .ExecuteShellCommand();
+        _logger?.LogInformation("{Output}", ffiShellOutput.Output);
         Assert.True(ffiShellOutput.ExitCode == 0, $"error merging platform FFIs:\n{ffiShellOutput.Output}");
+#pragma warning restore CA1848
     }
 }

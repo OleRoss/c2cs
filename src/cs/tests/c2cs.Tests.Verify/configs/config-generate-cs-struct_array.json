@@ -1,0 +1,6 @@
+{
+  "isEnabledDryRun": true,
+  "inputFilePath": "./../../../../c/tests/structs/struct_array/ffi-x/cross-platform.json",
+  "namespaceName": "test_namespace",
+  "className": "test_class"
+}

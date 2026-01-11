@@ -23,6 +23,13 @@ public sealed class CSharpTestAbstractSyntaxTree(
         return value!;
     }
 
+    public CSharpTestStruct GetStructs(string name)
+    {
+        var exists = structs.TryGetValue(name, out var value);
+        Assert.True(exists, $"The C# struct '{name}' does not exist.");
+        return value!;
+    }
+
     public CSharpTestEnum? TryGetEnum(string name)
     {
         _ = enums.TryGetValue(name, out var value);
